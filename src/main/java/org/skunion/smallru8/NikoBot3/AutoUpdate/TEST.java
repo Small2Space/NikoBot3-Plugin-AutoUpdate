@@ -22,7 +22,7 @@ public class TEST {
 		}
 		*/
 		float f1 = (float)256/1024;
-		System.out.println((int)(f1/0.2));
+		System.out.println("%");
 	}
 	public static String getVersion(String url) {
 		String ver = "";

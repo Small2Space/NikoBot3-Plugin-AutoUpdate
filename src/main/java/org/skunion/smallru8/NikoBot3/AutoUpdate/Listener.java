@@ -50,7 +50,7 @@ public class Listener extends ListenerAdapter{
 							String tmp = "";
 							for(int i=0;i<i1;i++)
 								tmp+=":white_large_square:";
-							embed.setDescription(output+tmp);
+							embed.setDescription(output+tmp+i1*20+"%");
 							message.editMessageEmbeds(embed.build()).queue();
 						}
 						fos.flush();
