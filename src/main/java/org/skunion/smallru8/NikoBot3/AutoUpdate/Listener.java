@@ -36,7 +36,7 @@ public class Listener extends ListenerAdapter{
 						HttpURLConnection con = (HttpURLConnection) downloadURL.openConnection();
 						con.setRequestProperty("User-agent", " Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0");
 						BufferedInputStream in = new BufferedInputStream(con.getInputStream());
-						int total_len = con.getContentLength();
+						//int total_len = con.getContentLength();
 						String output = "Checking for update...\nCurrent version: "+Core.version+"\n"
 								+ "Download "+latestVer+": ";
 						embed.setDescription(output);
@@ -44,11 +44,12 @@ public class Listener extends ListenerAdapter{
 						byte[] data = new byte[1024];
 						f.createNewFile();//:white_large_square: :green_square:
 						FileOutputStream fos = new FileOutputStream(f);
-						int n = 0,sum = 0;
+						int n = 0;
 						while((n=in.read(data,0,1024))>=0) {
 							fos.write(data,0,n);
 							
 							//prograss bar
+							/*
 							sum+=n;
 							float f1 = (float)sum/total_len;
 							int i1 = (int)(f1/0.2);
@@ -57,6 +58,7 @@ public class Listener extends ListenerAdapter{
 								tmp+=":white_large_square:";
 							embed.setDescription(output+tmp+i1*20+"%");
 							message.editMessageEmbeds(embed.build()).queue();
+							*/
 						}
 						fos.flush();
 						fos.close();
@@ -75,17 +77,17 @@ public class Listener extends ListenerAdapter{
 						//刪掉舊的、重啟
 						if(Core.osType) {
 							FileWriter fw = new FileWriter(new File("./rmPreviousLib.bat"));
-							fw.write("#"+guild_ch_msg+"\n");
+							fw.write("rem "+guild_ch_msg+"\n");
 							fw.write("timeout /t 10\n");
-							fw.write("del ./libs/"+decodedPath+"\njava -Dfile.encoding=UTF8 -jar NikoBot.jar");
+							fw.write("del "+decodedPath.replace("/", "\\")+"\njava -Dfile.encoding=UTF8 -jar "+System.getProperty("java.class.path"));
 							fw.flush();
 							fw.close();
-							Runtime.getRuntime().exec("./rmPreviousLib.bat");//windows
+							Runtime.getRuntime().exec("cmd /k start rmPreviousLib.bat");//windows
 						}else {
 							FileWriter fw = new FileWriter(new File("./rmPreviousLib.sh"));
 							fw.write("#"+guild_ch_msg+"\n");
 							fw.write("sleep 10\n");
-							fw.write("rm -rf ./libs/"+decodedPath+"/nnohup java -Dfile.encoding=UTF8 -jar NikoBot.jar");
+							fw.write("rm -rf "+decodedPath+"/nnohup java -Dfile.encoding=UTF8 -jar "+System.getProperty("java.class.path"));
 							fw.flush();
 							fw.close();
 							Runtime.getRuntime().exec("sh ./rmPreviousLib.sh");//linux

@@ -34,11 +34,11 @@ public class AutoUpdate implements PluginsInterface{
 					BufferedReader br = new BufferedReader(fr);
 					String line = "";
 					while((line = br.readLine())!=null) {
-						if(line.startsWith("#")) {
-							line = line.replace("#", "");
+						if(line.startsWith("#")||line.startsWith("rem")) {
+							line = line.replace("#", "").replace("rem ", "");
 							String[] vals = line.split(" ");
 							TextChannel tc = Core.botAPI.getGuildById(vals[0]).getTextChannelById(vals[1]);
-							Embed.EmbedSender(Color.pink,tc,":green_square: Updrage successful!","Current NikoBot version: "+Core.version);
+							Embed.EmbedSender(Color.pink,tc,":white_check_mark: Updrage successful!","Current NikoBot version: "+Core.version);
 							break;
 						}
 					}
