@@ -1,13 +1,17 @@
 package org.skunion.smallru8.NikoBot3.AutoUpdate;
 
 import com.github.smallru8.NikoBot.Core;
+import com.github.smallru8.NikoBot.Embed;
+
 import java.awt.Color;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -33,8 +37,8 @@ public class Listener extends ListenerAdapter{
 						con.setRequestProperty("User-agent", " Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0");
 						BufferedInputStream in = new BufferedInputStream(con.getInputStream());
 						int total_len = con.getContentLength();
-						String output = "Checking for update...\n"
-								+ "Download "+latestVer+" : ";
+						String output = "Checking for update...\nCurrent version: "+Core.version+"\n"
+								+ "Download "+latestVer+": ";
 						embed.setDescription(output);
 						message.editMessageEmbeds(embed.build()).queue();
 						byte[] data = new byte[1024];
@@ -44,6 +48,7 @@ public class Listener extends ListenerAdapter{
 						while((n=in.read(data,0,1024))>=0) {
 							fos.write(data,0,n);
 							
+							//prograss bar
 							sum+=n;
 							float f1 = (float)sum/total_len;
 							int i1 = (int)(f1/0.2);
@@ -59,10 +64,38 @@ public class Listener extends ListenerAdapter{
 						
 						for(int i=0;i<5;i++)
 							output+=":green_square:";
-						embed.setDescription(output+"\n"+"System reboot.");
+						embed.setDescription(output+"100%");
 						message.editMessageEmbeds(embed.build()).queue();
 						
-						//TODO 刪掉舊的、重啟
+						String path = Core.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+						String decodedPath = URLDecoder.decode(path,"UTF-8");
+						
+						Embed.EmbedSender(Color.pink,event.getChannel(),":octagonal_sign: リロード! System reboot!","");
+						String guild_ch_msg = event.getGuild().getId()+" "+event.getChannel().getId()+" "+event.getMessageId();
+						//刪掉舊的、重啟
+						if(Core.osType) {
+							FileWriter fw = new FileWriter(new File("./rmPreviousLib.bat"));
+							fw.write("#"+guild_ch_msg+"\n");
+							fw.write("timeout /t 10\n");
+							fw.write("del ./libs/"+decodedPath+"\njava -Dfile.encoding=UTF8 -jar NikoBot.jar");
+							fw.flush();
+							fw.close();
+							Runtime.getRuntime().exec("./rmPreviousLib.bat");//windows
+						}else {
+							FileWriter fw = new FileWriter(new File("./rmPreviousLib.sh"));
+							fw.write("#"+guild_ch_msg+"\n");
+							fw.write("sleep 10\n");
+							fw.write("rm -rf ./libs/"+decodedPath+"/nnohup java -Dfile.encoding=UTF8 -jar NikoBot.jar");
+							fw.flush();
+							fw.close();
+							Runtime.getRuntime().exec("sh ./rmPreviousLib.sh");//linux
+						}
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						System.exit(0);
 						
 			    	} catch (IOException e) {
 						e.printStackTrace();
