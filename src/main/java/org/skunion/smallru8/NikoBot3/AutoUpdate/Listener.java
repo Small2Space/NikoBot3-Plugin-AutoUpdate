@@ -87,7 +87,7 @@ public class Listener extends ListenerAdapter{
 							FileWriter fw = new FileWriter(new File("./rmPreviousLib.sh"));
 							fw.write("#"+guild_ch_msg+"\n");
 							fw.write("sleep 10\n");
-							fw.write("rm -rf "+decodedPath+"/nnohup java -Dfile.encoding=UTF8 -jar "+System.getProperty("java.class.path"));
+							fw.write("rm -rf "+decodedPath+"\nnohup java -Dfile.encoding=UTF8 -jar "+System.getProperty("java.class.path"));
 							fw.flush();
 							fw.close();
 							Runtime.getRuntime().exec("sh ./rmPreviousLib.sh");//linux
